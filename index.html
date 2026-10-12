@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Success AI</title>
+  <meta name="description" content="Smart Campus Analytics: Predict, Optimize & Improve Student Success." />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{--navy:#10213b;--blue:#3157d5;--bg:#f4f7fb;--card:#fff;--text:#17233b;--muted:#68758a;--line:#e3e9f2;--red:#d9534f;--amber:#e7a33e;--green:#36a269}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text)}
+    .hero{background:linear-gradient(120deg,#10213b,#284b9b);color:white;padding:30px clamp(18px,4vw,54px) 26px}
+    .hero h1{margin:0 0 8px;font-size:clamp(26px,3vw,38px)}.hero p{margin:0;color:#e0e8ff;max-width:850px;line-height:1.55}
+    .notice{margin-top:18px;padding:11px 14px;border:1px solid #ffffff45;background:#ffffff12;border-radius:10px;font-size:13px}
+    .layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:22px;padding:22px clamp(14px,3vw,38px);max-width:1600px;margin:auto}
+    aside,.panel,.metric,.tab-content{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 5px 20px #1a2b4a08}
+    aside{padding:20px;height:max-content;position:sticky;top:16px}aside h3{margin:0 0 16px;font-size:16px}
+    label{display:block;font-size:13px;font-weight:650;margin:14px 0 7px}input,select,button{font:inherit}
+    input[type=file],select{width:100%;border:1px solid #d5ddea;border-radius:8px;padding:10px;background:white;color:var(--text)}
+    .checklist{display:grid;gap:7px}.check{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:400;margin:0}.check input{accent-color:var(--blue)}
+    main{min-width:0}.section-title{margin:0 0 16px;font-size:22px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
+    .metric{padding:18px}.metric .label{font-size:13px;color:var(--muted);margin-bottom:8px}.metric .value{font-size:27px;font-weight:750;letter-spacing:-.5px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab-btn{border:1px solid var(--line);background:#fff;color:#43516b;padding:10px 14px;border-radius:9px;cursor:pointer;font-weight:650}
+    .tab-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}.tab-content{padding:22px;min-height:350px}.hidden{display:none!important}
+    .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.panel{padding:17px;min-width:0}.panel h3{font-size:15px;margin:0 0 14px}.chart-wrap{height:270px;position:relative}
+    .insight{background:#fff8e8;border:1px solid #f4dfad;padding:13px 15px;border-radius:10px;margin-top:16px;line-height:1.5}
+    .success{background:#eaf8f0;border-color:#bfe6ce}.muted{color:var(--muted);font-size:13px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}
+    table{border-collapse:collapse;width:100%;font-size:13px;min-width:700px}th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f7f9fc;color:#536079;font-size:12px;position:sticky;top:0}tr:last-child td{border-bottom:0}
+    .pill{display:inline-block;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:750}.High{background:#fde9e8;color:#a92c28}.Medium{background:#fff2d9;color:#8a5b0b}.Low{background:#e4f6eb;color:#176b42}
+    .btn{display:inline-block;border:0;background:var(--blue);color:white;padding:10px 14px;border-radius:9px;cursor:pointer;font-weight:650;margin:12px 8px 0 0}.btn.secondary{background:#eaf0ff;color:#2445b2}.profile-head{display:flex;gap:20px;flex-wrap:wrap;margin:12px 0 20px}.profile-head div{background:#f6f8fc;border-radius:10px;padding:12px 16px;min-width:130px}.profile-head strong{display:block;font-size:21px;margin-top:5px}
+    .footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 24px}.empty{padding:24px;text-align:center;color:var(--muted)}
+    @media(max-width:1050px){.layout{grid-template-columns:1fr}aside{position:static}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:700px){.grid2{grid-template-columns:1fr}.tab-content{padding:14px}.metric{padding:14px}.metric .value{font-size:23px}}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>🎓 Student Success AI</h1>
+    <p><strong>Smart Campus Analytics: Predict, Optimize &amp; Improve Student Success</strong><br>Analytics to help faculty identify students who may need academic or placement support.</p>
+    <div class="notice">Demo project: scores are rule-based indicators to support faculty review, not definitive predictions.</div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <h3>⚙️ Data Settings &amp; Filters</h3>
+      <label for="csvFile">Upload student data CSV</label>
+      <input type="file" id="csvFile" accept=".csv,text/csv" />
+      <p class="muted">No file? The dashboard uses 30 demo students. CSV columns can include student_id, name, department, year, cgpa, attendance, assignment_completion, lms_logins_week, events_participated, aptitude_score, coding_score, mock_interview_score, technical_skills, soft_skills, student_feedback.</p>
+      <label for="departments">Department</label><select id="departments" multiple size="5"></select>
+      <p class="muted">Use Ctrl (Windows) or ⌘ (Mac) to select multiple departments.</p>
+      <label for="years">Academic year</label><select id="years" multiple size="4"></select>
+      <label>Risk level</label>
+      <div class="checklist">
+        <label class="check"><input type="checkbox" class="riskFilter" value="High" checked> High</label>
+        <label class="check"><input type="checkbox" class="riskFilter" value="Medium" checked> Medium</label>
+        <label class="check"><input type="checkbox" class="riskFilter" value="Low" checked> Low</label>
+      </div>
+      <button class="btn secondary" id="resetFilters">Reset filters</button>
+      <div id="dataSource" class="muted" style="margin-top:14px">Data source: Demo sample data</div>
+    </aside>
+
+    <main>
+      <h2 class="section-title">📊 Student Performance Dashboard</h2>
+      <section class="metrics">
+        <div class="metric"><div class="label">Students</div><div class="value" id="studentCount">—</div></div>
+        <div class="metric"><div class="label">Average Success Score</div><div class="value" id="avgScore">—</div></div>
+        <div class="metric"><div class="label">High-Risk Students</div><div class="value" id="highRiskCount">—</div></div>
+        <div class="metric"><div class="label">Average Attendance</div><div class="value" id="avgAttendance">—</div></div>
+      </section>
+
+      <nav class="tabs" aria-label="Dashboard tabs">
+        <button class="tab-btn active" data-tab="analytics">📈 Analytics</button>
+        <button class="tab-btn" data-tab="risk">🚨 At-Risk Students</button>
+        <button class="tab-btn" data-tab="explorer">👤 Student Explorer</button>
+        <button class="tab-btn" data-tab="methodology">🧠 Score Methodology</button>
+      </nav>
+
+      <section class="tab-content" id="tab-analytics">
+        <div class="grid2">
+          <div class="panel"><h3>Risk Distribution</h3><div class="chart-wrap"><canvas id="riskChart"></canvas></div></div>
+          <div class="panel"><h3>Average Score by Department</h3><div class="chart-wrap"><canvas id="deptChart"></canvas></div></div>
+          <div class="panel"><h3>Attendance vs CGPA</h3><div class="chart-wrap"><canvas id="scatterChart"></canvas></div></div>
+          <div class="panel"><h3>Student Segments</h3><div class="chart-wrap"><canvas id="segmentChart"></canvas></div></div>
+        </div>
+        <div id="insights" class="insight"></div>
+      </section>
+
+      <section class="tab-content hidden" id="tab-risk">
+        <h3>Students Requiring Faculty Review</h3>
+        <p class="muted">High- and medium-risk students sorted by success score, lowest first.</p>
+        <div id="riskTable"></div>
+        <button class="btn" id="downloadRisk">⬇️ Download At-Risk Report CSV</button>
+      </section>
+
+      <section class="tab-content hidden" id="tab-explorer">
+        <h3>Individual Student Profile</h3>
+        <label for="studentSelect">Select a student</label><select id="studentSelect"></select>
+        <div id="studentProfile"></div>
+        <div class="panel"><h3>Student Indicators</h3><div class="chart-wrap"><canvas id="profileChart"></canvas></div></div>
+      </section>
+
+      <section class="tab-content hidden" id="tab-methodology">
+        <h3>How the Success Score Is Calculated</h3>
+        <div class="table-wrap"><table><thead><tr><th>Indicator</th><th>Weight</th><th>How it is measured</th></tr></thead><tbody>
+          <tr><td>Academic Performance</td><td>30%</td><td>CGPA converted to a 0–100 scale.</td></tr>
+          <tr><td>Attendance</td><td>20%</td><td>Attendance percentage.</td></tr>
+          <tr><td>LMS and Assignments</td><td>15%</td><td>Assignment completion combined with weekly LMS activity.</td></tr>
+          <tr><td>Engagement</td><td>10%</td><td>Events and campus activities.</td></tr>
+          <tr><td>Placement Readiness</td><td>15%</td><td>Average aptitude, coding and mock-interview scores.</td></tr>
+          <tr><td>Technical and Soft Skills</td><td>7%</td><td>Average technical and soft skills.</td></tr>
+          <tr><td>Student Feedback</td><td>3%</td><td>Feedback rating converted to a 0–100 scale.</td></tr>
+        </tbody></table></div>
+        <h3 style="margin-top:24px">Prototype risk rules</h3>
+        <ul>
+          <li><strong>High risk:</strong> academic concern together with low attendance, or score below 45.</li>
+          <li><strong>Medium risk:</strong> score below 60, or a key academic, attendance or placement flag.</li>
+          <li><strong>Low risk:</strong> none of the above rules are triggered.</li>
+        </ul>
+        <div class="insight">Important: These are demonstration thresholds, not validated predictions. Real deployment requires historical validation, appropriate data permissions, privacy safeguards and human review.</div>
+      </section>
+
+      <div class="panel" style="margin-top:18px">
+        <h3>📥 Export Student Analytics</h3>
+        <p class="muted">Download all currently filtered student results.</p>
+        <button class="btn" id="downloadAll">Download Complete Student Report</button>
+      </div>
+    </main>
+  </div>
+  <div class="footer">HacXLerate 2026 | FRESH BYTES | Student Success AI</div>
+
+<script>
+const names=["Aarav Sharma","Ananya Reddy","Rahul Kumar","Priya Singh","Sai Kiran","Meera Patel","Arjun Rao","Sneha Das","Vikram Naidu","Ishita Roy","Karthik Varma","Diya Nair","Rohan Gupta","Sanjana Iyer","Manoj Reddy","Aisha Khan","Teja Krishna","Nithya Rao","Aditya Jain","Pooja Verma","Harsha Babu","Lavanya Das","Nikhil Shah","Keerthi Rani","Sandeep Kumar","Madhavi Reddy","Abhinav Bose","Divya Menon","Pranav Joshi","Swathi Rao"];
+const departments=["CSE","IT","ECE","EEE","Mechanical"];
+const REQUIRED=["student_id","name","department","year","cgpa","attendance","assignment_completion","lms_logins_week","events_participated","aptitude_score","coding_score","mock_interview_score","technical_skills","soft_skills","student_feedback"];
+const numeric=["year","cgpa","attendance","assignment_completion","lms_logins_week","events_participated","aptitude_score","coding_score","mock_interview_score","technical_skills","soft_skills","student_feedback"];
+let allData=[], filtered=[], charts={};
+function rng(seed){let x=seed>>>0;return()=>{x=(1664525*x+1013904223)>>>0;return x/4294967296}}
+function between(r,min,max,dec=0){return +(min+r()*(max-min)).toFixed(dec)}
+function generateData(){
+ const r=rng(42);
+ const rows=names.map((name,i)=>({student_id:`STU${String(i+1).padStart(3,"0")}`,name,department:departments[i%5],year:Math.floor(r()*4)+1,cgpa:between(r,4,10,2),attendance:between(r,35,100,1),assignment_completion:between(r,20,100,1),lms_logins_week:Math.floor(r()*12),events_participated:Math.floor(r()*7),aptitude_score:between(r,20,100,1),coding_score:between(r,15,100,1),mock_interview_score:between(r,20,100,1),technical_skills:between(r,25,100,1),soft_skills:between(r,25,100,1),student_feedback:between(r,1,5,1)}));
+ Object.assign(rows[2],{cgpa:4.8,attendance:42,assignment_completion:35,lms_logins_week:1,aptitude_score:38,coding_score:30,mock_interview_score:32});
+ Object.assign(rows[8],{cgpa:8.8,attendance:91,assignment_completion:95,aptitude_score:42,coding_score:35,mock_interview_score:38});
+ return rows;
+}
+function cleanRows(rows){
+ return rows.map((src,i)=>{const row={...src};REQUIRED.forEach(c=>{if(row[c]===undefined||row[c]===null||row[c]===""){row[c]=c==="student_id"?`STU${String(i+1).padStart(3,"0")}`:c==="name"?`Student ${i+1}`:c==="department"?"Not specified":c==="year"?1:c==="student_feedback"?3:0;}});
+ numeric.forEach(c=>{row[c]=Number(row[c]);if(!Number.isFinite(row[c]))row[c]=0;});
+ const limits={cgpa:[0,10],attendance:[0,100],assignment_completion:[0,100],lms_logins_week:[0,100],events_participated:[0,100],aptitude_score:[0,100],coding_score:[0,100],mock_interview_score:[0,100],technical_skills:[0,100],soft_skills:[0,100],student_feedback:[1,5],year:[1,8]};
+ Object.entries(limits).forEach(([c,[lo,hi]])=>row[c]=Math.max(lo,Math.min(hi,row[c])));
+ ["student_id","name","department"].forEach(c=>row[c]=String(row[c]));
+ return row;});
+}
+function score(r){
+ const academic=r.cgpa*10, lms=r.assignment_completion*.7+Math.max(0,Math.min(1,r.lms_logins_week/10))*30;
+ const engagement=Math.max(0,Math.min(1,r.events_participated/5))*100;
+ const placement=(r.aptitude_score+r.coding_score+r.mock_interview_score)/3;
+ const skills=(r.technical_skills+r.soft_skills)/2,feedback=((r.student_feedback-1)/4)*100;
+ r.success_score=+(academic*.30+r.attendance*.20+lms*.15+engagement*.10+placement*.15+skills*.07+feedback*.03).toFixed(1);
+ r.academic_flag=r.cgpa<6||r.assignment_completion<50;r.attendance_flag=r.attendance<65;r.placement_score=placement;r.placement_flag=placement<45;r.engagement_flag=r.lms_logins_week<2||r.events_participated===0;
+ const flags=[];if(r.academic_flag)flags.push("Low CGPA or assignments");if(r.attendance_flag)flags.push("Low attendance");if(r.placement_flag)flags.push("Low placement readiness");if(r.engagement_flag)flags.push("Low engagement");
+ r.risk_factors=flags.join(", ")||"No major risk flags";
+ const high=(r.academic_flag&&r.attendance_flag)||r.success_score<45;
+ const medium=r.success_score<60||r.academic_flag||r.attendance_flag||r.placement_flag;
+ r.risk_level=high?"High":medium?"Medium":"Low";
+ if(r.cgpa>=7.5&&placement<50)r.segment="Strong academics, low placement readiness";
+ else if(r.cgpa<6&&r.attendance<65)r.segment="Academic and attendance support";
+ else if(r.attendance>=80&&r.cgpa>=7.5)r.segment="Consistent performer";
+ else if(r.events_participated===0&&r.lms_logins_week<2)r.segment="Low engagement";
+ else r.segment="Needs routine monitoring";
+ const actions=[];if(r.cgpa<6||r.assignment_completion<50)actions.push("Faculty check-in and remedial study plan");if(r.attendance<65)actions.push("Discuss attendance barriers and follow-up");if(placement<50)actions.push("Aptitude practice, coding exercises and mock interviews");if(r.lms_logins_week<2||r.events_participated===0)actions.push("Check LMS access and encourage learning activities");
+ r.suggested_action=actions.join("; ")||"Monthly progress review and enrichment opportunities";
+ return r;
+}
+function parseCSV(text){
+ const rows=[];let row=[],cell="",quoted=false;
+ for(let i=0;i<text.length;i++){const ch=text[i];if(ch==='"'&&quoted&&text[i+1]==='"'){cell+='"';i++;}else if(ch==='"'){quoted=!quoted;}else if(ch===','&&!quoted){row.push(cell);cell="";}else if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(v=>v.trim()!==""))rows.push(row);row=[];cell="";}else cell+=ch;}
+ row.push(cell);if(row.some(v=>v.trim()!==""))rows.push(row);if(rows.length<2)return [];
+ const headers=rows.shift().map(h=>h.trim().toLowerCase());
+ return rows.map(cells=>Object.fromEntries(headers.map((h,i)=>[h,(cells[i]??"").trim()])));
+}
+function setupMulti(id,values){const el=document.getElementById(id);el.innerHTML="";values.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;o.selected=true;el.appendChild(o);});}
+function selected(id){return [...document.getElementById(id).selectedOptions].map(o=>o.value)}
+function refreshFilters(){
+ const ds=[...new Set(allData.map(r=>r.department))].sort(),ys=[...new Set(allData.map(r=>r.year))].sort((a,b)=>a-b);
+ setupMulti("departments",ds);setupMulti("years",ys);render();
+}
+function escapeHTML(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function makeTable(rows,cols){
+ if(!rows.length)return '<div class="empty">No students match the selected filters.</div>';
+ return `<div class="table-wrap"><table><thead><tr>${cols.map(c=>`<th>${escapeHTML(c.replaceAll("_"," ").replace(/\b\w/g,m=>m.toUpperCase()))}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${c==="risk_level"?`<span class="pill ${r[c]}">${r[c]}</span>`:escapeHTML(c==="success_score"?Number(r[c]).toFixed(1):r[c])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+function chart(id,config){destroyChart(id);const ctx=document.getElementById(id);if(ctx)charts[id]=new Chart(ctx,config);}
+const riskColors={High:"#d9534f",Medium:"#f0ad4e",Low:"#36a269"};
+function render(){
+ const ds=selected("departments"),ys=selected("years").map(Number),risks=[...document.querySelectorAll(".riskFilter:checked")].map(x=>x.value);
+ filtered=allData.filter(r=>ds.includes(r.department)&&ys.includes(r.year)&&risks.includes(r.risk_level));
+ document.getElementById("dataSource").textContent=`Data source: ${window.dataSource||"Demo sample data"} | Total records: ${allData.length}`;
+ if(!filtered.length){["studentCount","avgScore","highRiskCount","avgAttendance"].forEach(id=>document.getElementById(id).textContent="0");document.getElementById("insights").textContent="No students match the selected filters. Change the filters to see analytics.";document.getElementById("riskTable").innerHTML='<div class="empty">No students match the selected filters.</div>';document.getElementById("studentSelect").innerHTML="";document.getElementById("studentProfile").innerHTML="";["riskChart","deptChart","scatterChart","segmentChart","profileChart"].forEach(destroyChart);return;}
+ const avg=key=>filtered.reduce((s,r)=>s+Number(r[key]),0)/filtered.length;
+ document.getElementById("studentCount").textContent=filtered.length;
+ document.getElementById("avgScore").textContent=avg("success_score").toFixed(1)+"/100";
+ document.getElementById("highRiskCount").textContent=filtered.filter(r=>r.risk_level==="High").length;
+ document.getElementById("avgAttendance").textContent=avg("attendance").toFixed(1)+"%";
+ const rc=["High","Medium","Low"].map(k=>filtered.filter(r=>r.risk_level===k).length);
+ chart("riskChart",{type:"bar",data:{labels:["High","Medium","Low"],datasets:[{label:"Students",data:rc,backgroundColor:["#d9534f","#f0ad4e","#36a269"],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+ const deptMap={};filtered.forEach(r=>(deptMap[r.department]??=[]).push(r.success_score));
+ const deptLabels=Object.keys(deptMap).sort();chart("deptChart",{type:"bar",data:{labels:deptLabels,datasets:[{label:"Average success score",data:deptLabels.map(d=>deptMap[d].reduce((a,b)=>a+b,0)/deptMap[d].length),backgroundColor:"#5576e8",borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100}}}});
+ chart("scatterChart",{type:"scatter",data:{datasets:["High","Medium","Low"].map(k=>({label:k,data:filtered.filter(r=>r.risk_level===k).map(r=>({x:r.attendance,y:r.cgpa,name:r.name,score:r.success_score})),backgroundColor:riskColors[k]}))},options:{responsive:true,maintainAspectRatio:false,scales:{x:{title:{display:true,text:"Attendance (%)"},min:0,max:100},y:{title:{display:true,text:"CGPA"},min:0,max:10}},plugins:{tooltip:{callbacks:{label:c=>`${c.raw.name}: Attendance ${c.raw.x}%, CGPA ${c.raw.y}, Score ${c.raw.score}`}}}}});
+ const segMap={};filtered.forEach(r=>segMap[r.segment]=(segMap[r.segment]||0)+1);chart("segmentChart",{type:"doughnut",data:{labels:Object.keys(segMap),datasets:[{data:Object.values(segMap),backgroundColor:["#5576e8","#36a269","#e7a33e","#9b6be8","#5db8c9","#e77998"]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}});
+ const atRisk=filtered.filter(r=>r.risk_level!=="Low").sort((a,b)=>a.success_score-b.success_score);
+ document.getElementById("riskTable").innerHTML=makeTable(atRisk,["student_id","name","department","success_score","risk_level","risk_factors","suggested_action"]);
+ const placement=avg("aptitude_score")/3+avg("coding_score")/3+avg("mock_interview_score")/3;
+ const averages={"Attendance":avg("attendance"),"Assignment completion":avg("assignment_completion"),"Placement readiness":placement,"Technical skills":avg("technical_skills")};
+ const weakest=Object.keys(averages).reduce((a,b)=>averages[a]<averages[b]?a:b);
+ const hc=rc[0];document.getElementById("insights").className="insight"+(hc===0?" success":"");
+ document.getElementById("insights").textContent=(hc?`${hc} student(s) need priority review. Faculty should verify their individual circumstances. `:"No high-risk students in the selected view. ")+`Lowest average indicator: ${weakest} (${averages[weakest].toFixed(1)}/100).`;
+ const old=document.getElementById("studentSelect").value;
+ const sel=document.getElementById("studentSelect");sel.innerHTML="";
+ [...filtered].sort((a,b)=>a.name.localeCompare(b.name)).forEach(r=>{const o=document.createElement("option");o.value=r.student_id;o.textContent=`${r.student_id} — ${r.name}`;sel.appendChild(o);});
+ if(filtered.some(r=>r.student_id===old))sel.value=old;
+ renderProfile();
+}
+function renderProfile(){
+ const id=document.getElementById("studentSelect").value;const s=filtered.find(r=>r.student_id===id);if(!s)return;
+ document.getElementById("studentProfile").innerHTML=`<div class="profile-head"><div>Success Score<strong>${s.success_score.toFixed(1)}/100</strong></div><div>Risk Level<strong><span class="pill ${s.risk_level}">${s.risk_level}</span></strong></div><div>Department<strong>${escapeHTML(s.department)}</strong></div></div><p><b>Name:</b> ${escapeHTML(s.name)} &nbsp; <b>Student ID:</b> ${escapeHTML(s.student_id)} &nbsp; <b>Academic Year:</b> ${s.year}</p><p><b>Student Segment:</b> ${escapeHTML(s.segment)}</p><h3>Why Was This Student Flagged?</h3><p>${escapeHTML(s.risk_factors)}</p><h3>Suggested Support Plan</h3><p>${escapeHTML(s.suggested_action)}</p><p class="muted">Suggestions are generated from visible rules. Faculty should verify the situation with the student.</p>`;
+ const indicators=[["Academic Performance",s.cgpa*10],["Attendance",s.attendance],["Assignment Completion",s.assignment_completion],["LMS Activity",Math.min(s.lms_logins_week/10,1)*100],["Placement Readiness",s.placement_score],["Technical Skills",s.technical_skills],["Soft Skills",s.soft_skills]];
+ chart("profileChart",{type:"bar",data:{labels:indicators.map(x=>x[0]),datasets:[{label:"Score",data:indicators.map(x=>x[1]),backgroundColor:"#5576e8",borderRadius:5}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{min:0,max:100}}}});
+}
+function csvEscape(v){const s=String(v??"");return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
+function downloadCSV(rows,cols,filename){const content=[cols.join(","),...rows.map(r=>cols.map(c=>csvEscape(r[c])).join(","))].join("\r\n");const blob=new Blob(["\ufeff"+content],{type:"text/csv;charset=utf-8;"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);}
+document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b===btn));document.querySelectorAll(".tab-content").forEach(p=>p.classList.toggle("hidden",p.id!=="tab-"+btn.dataset.tab));if(btn.dataset.tab==="explorer")renderProfile();}));
+document.getElementById("departments").addEventListener("change",render);document.getElementById("years").addEventListener("change",render);document.querySelectorAll(".riskFilter").forEach(x=>x.addEventListener("change",render));document.getElementById("studentSelect").addEventListener("change",renderProfile);
+document.getElementById("resetFilters").addEventListener("click",()=>{[...document.getElementById("departments").options,...document.getElementById("years").options].forEach(o=>o.selected=true);document.querySelectorAll(".riskFilter").forEach(x=>x.checked=true);render();});
+document.getElementById("csvFile").addEventListener("change",async e=>{const file=e.target.files[0];if(!file)return;try{const rows=parseCSV(await file.text());if(!rows.length)throw new Error("The CSV file is empty or could not be parsed.");allData=cleanRows(rows).map(score);window.dataSource="Uploaded CSV";refreshFilters();}catch(err){alert("Could not load CSV: "+err.message);}});
+document.getElementById("downloadRisk").addEventListener("click",()=>downloadCSV(filtered.filter(r=>r.risk_level!=="Low").sort((a,b)=>a.success_score-b.success_score),["student_id","name","department","success_score","risk_level","risk_factors","suggested_action"],"at_risk_students.csv"));
+document.getElementById("downloadAll").addEventListener("click",()=>downloadCSV(filtered,["student_id","name","department","year","cgpa","attendance","success_score","risk_level","risk_factors","segment","suggested_action"],"student_success_report.csv"));
+allData=generateData().map(score);window.dataSource="Demo sample data";refreshFilters();
+</script>
+</body>
+</html>
